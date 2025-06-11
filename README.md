@@ -100,7 +100,7 @@
         
         .day {
             text-align: center;
-            padding: 15px 5px;
+            padding: 10px 5px;
             border-radius: 10px;
             cursor: pointer;
             border: 2px solid #ecf0f1;
@@ -108,10 +108,10 @@
             position: relative;
             font-weight: 600;
             font-size: 1.1rem;
-            aspect-ratio: 1/1;
+            height: 70px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
         }
         
@@ -132,14 +132,23 @@
         }
         
         .quality-indicator {
-            font-size: 0.9rem;
-            margin-top: 5px;
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
             gap: 2px;
+            width: 100%;
+            margin-top: 3px;
         }
         
         .quality-indicator i {
             color: #f1c40f;
+            font-size: 0.6rem;
+            background: rgba(241, 196, 15, 0.1);
+            border-radius: 3px;
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1px;
         }
         
         .modal {
@@ -481,7 +490,7 @@
     
     <footer>
         <p>睡眠是健康的基石 · 優質睡眠帶來美好生活</p>
-        <p>© 2023 駱彥廷睡眠觀察系統 · 版本 2.0</p>
+        <p>© 2025 駱彥廷睡眠觀察系統 · 版本 2.0</p>
     </footer>
     
     <script>
@@ -587,7 +596,7 @@
                     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                     const dayElement = document.createElement('div');
                     dayElement.className = 'day';
-                    dayElement.innerHTML = day;
+                    dayElement.innerHTML = `<div>${day}</div>`;
                     dayElement.dataset.date = dateStr;
                     
                     // 標記今天
@@ -604,10 +613,15 @@
                             const qualityIndicator = document.createElement('div');
                             qualityIndicator.className = 'quality-indicator';
                             
-                            for (let i = 0; i < sleepData[dateStr].quality; i++) {
-                                const star = document.createElement('i');
-                                star.className = 'fas fa-star active';
-                                qualityIndicator.appendChild(star);
+                            // 創建5個格子，但只顯示實際評分數量的星星
+                            for (let i = 1; i <= 5; i++) {
+                                const starContainer = document.createElement('div');
+                                if (i <= sleepData[dateStr].quality) {
+                                    const star = document.createElement('i');
+                                    star.className = 'fas fa-star active';
+                                    starContainer.appendChild(star);
+                                }
+                                qualityIndicator.appendChild(starContainer);
                             }
                             
                             dayElement.appendChild(qualityIndicator);
@@ -808,7 +822,7 @@
                 chartContainer.innerHTML = '';
                 
                 // 如果沒有數據，顯示提示
-                if (Object.values(distribution).every(count => count === 0)) {
+                if (!distribution || Object.values(distribution).every(count => count === 0)) {
                     chartContainer.innerHTML = '<p>本月無睡眠品質數據</p>';
                     return;
                 }
