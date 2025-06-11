@@ -3,55 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>駱彥廷ㄉ睡覺觀察</title>
+    <title>駱彥廷ㄉ睡眠觀察</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
-            font-family: 'Microsoft JhengHei', Arial, sans-serif;
-            max-width: 800px;
+            font-family: 'Microsoft JhengHei', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f5f5f5;
-        }
-        h1 {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
             color: #333;
+            min-height: 100vh;
+        }
+        
+        header {
             text-align: center;
+            padding: 20px 0 30px;
+            position: relative;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: "💤";
+            position: absolute;
+            right: -40px;
+            top: 5px;
+            font-size: 2rem;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
             margin-bottom: 30px;
         }
-        .calendar {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+        
+        @media (min-width: 768px) {
+            .dashboard {
+                grid-template-columns: 2fr 1fr;
+            }
         }
+        
+        .panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+        
+        .panel:hover {
+            transform: translateY(-5px);
+        }
+        
         .calendar-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
+        
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
+            gap: 8px;
         }
+        
         .day-header {
             text-align: center;
             font-weight: bold;
-            padding: 5px;
+            padding: 12px 5px;
+            color: #3498db;
+            font-size: 1.1rem;
+            border-bottom: 2px solid #3498db;
         }
+        
         .day {
             text-align: center;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 15px 5px;
+            border-radius: 10px;
             cursor: pointer;
+            border: 2px solid #ecf0f1;
+            transition: all 0.2s;
+            position: relative;
+            font-weight: 600;
+            font-size: 1.1rem;
+            aspect-ratio: 1/1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
+        
         .day:hover {
-            background-color: #e0e0e0;
+            background-color: #e0f7fa;
+            transform: scale(1.05);
         }
+        
         .day.has-entry {
-            background-color: #e3f2fd;
+            background-color: #bbdefb;
+            border-color: #90caf9;
         }
+        
+        .day.today {
+            background-color: #ffe0b2;
+            border-color: #ffcc80;
+            box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.3);
+        }
+        
+        .quality-indicator {
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: flex;
+            gap: 2px;
+        }
+        
+        .quality-indicator i {
+            color: #f1c40f;
+        }
+        
         .modal {
             display: none;
             position: fixed;
@@ -59,69 +149,695 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0,0,0,0.7);
             justify-content: center;
             align-items: center;
+            z-index: 1000;
         }
+        
         .modal-content {
             background: white;
-            padding: 20px;
-            border-radius: 10px;
-            width: 300px;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
         }
-        .stats {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #7f8c8d;
+            transition: color 0.3s;
         }
+        
+        .close-modal:hover {
+            color: #e74c3c;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
         .stat-item {
+            padding: 15px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+        }
+        
+        .stat-item h3 {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .quality-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #fff8e1;
+            border-radius: 10px;
+        }
+        
+        .star-rating {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .star-rating i {
+            font-size: 2rem;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: color 0.2s, transform 0.2s;
+        }
+        
+        .star-rating i:hover {
+            transform: scale(1.2);
+        }
+        
+        .star-rating i.active {
+            color: #ffc107;
+        }
+        
+        input[type="time"] {
+            padding: 12px;
+            margin: 10px 0;
+            width: 100%;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="time"]:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        label {
+            display: block;
+            margin: 15px 0 8px;
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            gap: 15px;
+        }
+        
+        button {
+            padding: 12px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            flex: 1;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        #save-entry {
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+        }
+        
+        #save-entry:hover {
+            background: linear-gradient(to right, #2980b9, #2573a7);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        #cancel-entry {
+            background: linear-gradient(to right, #95a5a6, #7f8c8d);
+            color: white;
+        }
+        
+        #cancel-entry:hover {
+            background: linear-gradient(to right, #7f8c8d, #707b7c);
+            transform: translateY(-2px);
+        }
+        
+        .sleep-quality-chart {
+            display: flex;
+            align-items: flex-end;
+            height: 120px;
+            margin-top: 15px;
+            gap: 10px;
+            padding: 10px 0;
+            border-top: 1px solid #eee;
+        }
+        
+        .quality-bar {
+            flex: 1;
+            background: #e0e0e0;
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            transition: height 0.5s ease;
+        }
+        
+        .quality-bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+        
+        .quality-bar-value {
+            position: absolute;
+            top: -25px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .highlight {
+            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .tips {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 10px;
+            font-size: 0.95rem;
+        }
+        
+        .tips h3 {
             margin-bottom: 10px;
+            color: #1976d2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tips ul {
+            padding-left: 20px;
+        }
+        
+        .tips li {
+            margin: 8px 0;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            padding: 20px 0;
+            border-top: 1px solid #eee;
         }
     </style>
 </head>
 <body>
-    <h1>駱彥廷ㄉ睡覺觀察</h1>
+    <header>
+        <h1>駱彥廷ㄉ睡眠觀察</h1>
+        <div class="subtitle">記錄睡眠時間與品質，提升健康生活</div>
+    </header>
     
-    <div class="calendar">
-        <div class="calendar-header">
-            <button id="prev-month">上個月</button>
-            <h2 id="current-month">2023年11月</h2>
-            <button id="next-month">下個月</button>
+    <div class="dashboard">
+        <div class="panel">
+            <div class="calendar-header">
+                <button id="prev-month"><i class="fas fa-chevron-left"></i> 上個月</button>
+                <h2 id="current-month"></h2>
+                <button id="next-month">下個月 <i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="calendar-grid" id="calendar-grid">
+                <!-- 日曆內容將由JavaScript動態生成 -->
+            </div>
         </div>
-        <div class="calendar-grid" id="calendar-grid">
-            <!-- 日曆內容將由JavaScript動態生成 -->
-        </div>
-    </div>
-    
-    <div class="stats">
-        <h2>睡眠統計</h2>
-        <div class="stat-item">
-            <strong>平均入睡時間:</strong> <span id="avg-sleep-time">--:--</span>
-        </div>
-        <div class="stat-item">
-            <strong>平均睡眠時數:</strong> <span id="avg-sleep-hours">-- 小時</span>
+        
+        <div class="panel">
+            <h2><i class="fas fa-chart-line"></i> 睡眠統計</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3><i class="fas fa-moon"></i> 平均入睡時間</h3>
+                    <div class="stat-value" id="avg-sleep-time">--:--</div>
+                </div>
+                <div class="stat-item">
+                    <h3><i class="fas fa-sun"></i> 平均起床時間</h3>
+                    <div class="stat-value" id="avg-wake-time">--:--</div>
+                </div>
+                <div class="stat-item">
+                    <h3><i class="fas fa-bed"></i> 平均睡眠時數</h3>
+                    <div class="stat-value" id="avg-sleep-hours">-- 小時</div>
+                </div>
+                <div class="stat-item">
+                    <h3><i class="fas fa-calendar-check"></i> 本月打卡天數</h3>
+                    <div class="stat-value" id="total-days">0 天</div>
+                </div>
+                <div class="stat-item">
+                    <h3><i class="fas fa-star"></i> 平均睡眠品質</h3>
+                    <div class="stat-value" id="avg-quality">--</div>
+                </div>
+            </div>
+            
+            <div class="sleep-quality-chart" id="quality-chart">
+                <!-- 睡眠品質圖表將由JavaScript動態生成 -->
+            </div>
+            
+            <div class="tips">
+                <h3><i class="fas fa-lightbulb"></i> 優質睡眠小貼士</h3>
+                <ul>
+                    <li>每天固定時間上床睡覺和起床</li>
+                    <li>睡前1小時避免使用電子設備</li>
+                    <li>保持臥室涼爽、黑暗且安靜</li>
+                    <li>下午後避免攝取咖啡因</li>
+                </ul>
+            </div>
         </div>
     </div>
     
     <div class="modal" id="entry-modal">
         <div class="modal-content">
-            <h3 id="modal-date">2023年11月15日</h3>
+            <span class="close-modal">&times;</span>
+            <h3 id="modal-date"></h3>
+            
             <div>
-                <label for="sleep-time">入睡時間:</label>
-                <input type="time" id="sleep-time" required>
+                <label for="sleep-time"><i class="fas fa-moon"></i> 入睡時間:</label>
+                <input type="time" id="sleep-time" required value="23:00">
             </div>
+            
             <div>
-                <label for="wake-time">起床時間:</label>
-                <input type="time" id="wake-time" required>
+                <label for="wake-time"><i class="fas fa-sun"></i> 起床時間:</label>
+                <input type="time" id="wake-time" required value="07:30">
             </div>
-            <button id="save-entry">保存</button>
-            <button id="cancel-entry">取消</button>
+            
+            <div class="quality-section">
+                <label><i class="fas fa-star"></i> 睡眠品質:</label>
+                <div class="star-rating" id="star-rating">
+                    <i class="fas fa-star" data-rating="1"></i>
+                    <i class="fas fa-star" data-rating="2"></i>
+                    <i class="fas fa-star" data-rating="3"></i>
+                    <i class="fas fa-star" data-rating="4"></i>
+                    <i class="fas fa-star" data-rating="5"></i>
+                </div>
+                <div id="quality-description" style="text-align: center; margin-top: 10px; font-style: italic; color: #7f8c8d;">
+                    請選擇睡眠品質評分
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button id="save-entry"><i class="fas fa-save"></i> 保存記錄</button>
+                <button id="cancel-entry"><i class="fas fa-times"></i> 取消</button>
+            </div>
         </div>
     </div>
     
+    <footer>
+        <p>睡眠是健康的基石 · 優質睡眠帶來美好生活</p>
+        <p>© 2023 駱彥廷睡眠觀察系統 · 版本 2.0</p>
+    </footer>
+    
     <script>
-        // 這裡將放置JavaScript代碼
+        document.addEventListener('DOMContentLoaded', function() {
+            // 當前日期
+            const now = new Date();
+            let currentMonth = now.getMonth();
+            let currentYear = now.getFullYear();
+            const today = now.getDate();
+            let selectedRating = 0;
+            
+            // 從本地存儲加載數據
+            let sleepData = JSON.parse(localStorage.getItem('sleepData')) || {};
+            
+            // 睡眠品質描述
+            const qualityDescriptions = {
+                1: "非常差 - 輾轉難眠，多次醒來",
+                2: "不太好 - 睡眠不深，醒來仍感疲倦",
+                3: "普通 - 睡眠尚可，但還不夠理想",
+                4: "良好 - 睡眠安穩，醒來精神不錯",
+                5: "極佳 - 深度睡眠，醒來神清氣爽"
+            };
+            
+            // 初始化日曆
+            renderCalendar(currentMonth, currentYear);
+            updateStats();
+            setupStarRating();
+            
+            // 上個月/下個月按鈕
+            document.getElementById('prev-month').addEventListener('click', function() {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                renderCalendar(currentMonth, currentYear);
+            });
+            
+            document.getElementById('next-month').addEventListener('click', function() {
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+                renderCalendar(currentMonth, currentYear);
+            });
+            
+            // 設置星級評分
+            function setupStarRating() {
+                const stars = document.querySelectorAll('#star-rating i');
+                const description = document.getElementById('quality-description');
+                
+                stars.forEach(star => {
+                    star.addEventListener('click', function() {
+                        const rating = parseInt(this.dataset.rating);
+                        selectedRating = rating;
+                        
+                        // 更新星星樣式
+                        stars.forEach((s, index) => {
+                            if (index < rating) {
+                                s.classList.add('active');
+                            } else {
+                                s.classList.remove('active');
+                            }
+                        });
+                        
+                        // 更新描述
+                        description.textContent = qualityDescriptions[rating];
+                    });
+                });
+            }
+            
+            // 渲染日曆
+            function renderCalendar(month, year) {
+                // 更新月份標題
+                document.getElementById('current-month').textContent = `${year}年${month + 1}月`;
+                
+                const firstDay = new Date(year, month, 1);
+                const startingDay = firstDay.getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                
+                const calendarGrid = document.getElementById('calendar-grid');
+                calendarGrid.innerHTML = '';
+                
+                // 添加星期標題
+                const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+                weekdays.forEach(day => {
+                    const dayHeader = document.createElement('div');
+                    dayHeader.className = 'day-header';
+                    dayHeader.textContent = day;
+                    calendarGrid.appendChild(dayHeader);
+                });
+                
+                // 添加空白格子
+                for (let i = 0; i < startingDay; i++) {
+                    const emptyDay = document.createElement('div');
+                    emptyDay.className = 'day';
+                    calendarGrid.appendChild(emptyDay);
+                }
+                
+                // 添加日期格子
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'day';
+                    dayElement.innerHTML = day;
+                    dayElement.dataset.date = dateStr;
+                    
+                    // 標記今天
+                    if (year === now.getFullYear() && month === now.getMonth() && day === today) {
+                        dayElement.classList.add('today');
+                    }
+                    
+                    // 檢查是否有記錄
+                    if (sleepData[dateStr]) {
+                        dayElement.classList.add('has-entry');
+                        
+                        // 添加睡眠品質指示器
+                        if (sleepData[dateStr].quality) {
+                            const qualityIndicator = document.createElement('div');
+                            qualityIndicator.className = 'quality-indicator';
+                            
+                            for (let i = 0; i < sleepData[dateStr].quality; i++) {
+                                const star = document.createElement('i');
+                                star.className = 'fas fa-star active';
+                                qualityIndicator.appendChild(star);
+                            }
+                            
+                            dayElement.appendChild(qualityIndicator);
+                        }
+                    }
+                    
+                    dayElement.addEventListener('click', function() {
+                        openEntryModal(dateStr);
+                    });
+                    
+                    calendarGrid.appendChild(dayElement);
+                }
+            }
+            
+            // 打開打卡模態框
+            function openEntryModal(dateStr) {
+                const [year, month, day] = dateStr.split('-');
+                const modal = document.getElementById('entry-modal');
+                document.getElementById('modal-date').textContent = `${year}年${month}月${day}日`;
+                document.getElementById('modal-date').dataset.date = dateStr;
+                
+                // 重置星級
+                selectedRating = 0;
+                const stars = document.querySelectorAll('#star-rating i');
+                stars.forEach(star => star.classList.remove('active'));
+                document.getElementById('quality-description').textContent = "請選擇睡眠品質評分";
+                
+                // 設置時間輸入框的值
+                const entry = sleepData[dateStr];
+                document.getElementById('sleep-time').value = entry ? entry.sleepTime : '23:00';
+                document.getElementById('wake-time').value = entry ? entry.wakeTime : '07:30';
+                
+                // 如果有品質記錄，設置星級
+                if (entry && entry.quality) {
+                    selectedRating = entry.quality;
+                    stars.forEach((star, index) => {
+                        if (index < entry.quality) {
+                            star.classList.add('active');
+                        }
+                    });
+                    document.getElementById('quality-description').textContent = qualityDescriptions[entry.quality];
+                }
+                
+                modal.style.display = 'flex';
+            }
+            
+            // 保存打卡記錄
+            document.getElementById('save-entry').addEventListener('click', function() {
+                const sleepTime = document.getElementById('sleep-time').value;
+                const wakeTime = document.getElementById('wake-time').value;
+                const dateStr = document.getElementById('modal-date').dataset.date;
+                
+                if (!sleepTime || !wakeTime) {
+                    alert('請填寫完整的入睡和起床時間！');
+                    return;
+                }
+                
+                if (!dateStr) {
+                    alert('日期信息丟失，請重新選擇日期！');
+                    return;
+                }
+                
+                if (selectedRating === 0) {
+                    alert('請選擇睡眠品質評分！');
+                    return;
+                }
+                
+                // 保存數據（包括睡眠品質）
+                sleepData[dateStr] = {
+                    sleepTime: sleepTime,
+                    wakeTime: wakeTime,
+                    quality: selectedRating
+                };
+                
+                localStorage.setItem('sleepData', JSON.stringify(sleepData));
+                
+                // 關閉模態框並更新
+                document.getElementById('entry-modal').style.display = 'none';
+                renderCalendar(currentMonth, currentYear);
+                updateStats();
+            });
+            
+            // 取消打卡
+            document.getElementById('cancel-entry').addEventListener('click', function() {
+                document.getElementById('entry-modal').style.display = 'none';
+            });
+            
+            // 點擊模態框外部或關閉按鈕關閉
+            document.querySelector('.close-modal').addEventListener('click', function() {
+                document.getElementById('entry-modal').style.display = 'none';
+            });
+            
+            document.getElementById('entry-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            });
+            
+            // 更新統計數據
+            function updateStats() {
+                const currentMonthStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
+                const monthEntries = Object.entries(sleepData).filter(
+                    ([dateStr]) => dateStr.startsWith(currentMonthStr)
+                );
+                
+                document.getElementById('total-days').textContent = `${monthEntries.length} 天`;
+                
+                if (monthEntries.length === 0) {
+                    document.getElementById('avg-sleep-time').textContent = '--:--';
+                    document.getElementById('avg-wake-time').textContent = '--:--';
+                    document.getElementById('avg-sleep-hours').textContent = '-- 小時';
+                    document.getElementById('avg-quality').textContent = '--';
+                    renderQualityChart([]);
+                    return;
+                }
+                
+                // 計算平均入睡時間
+                let sleepTotalMinutes = 0;
+                // 計算平均起床時間
+                let wakeTotalMinutes = 0;
+                
+                monthEntries.forEach(([_, entry]) => {
+                    if (entry.sleepTime) {
+                        const [hours, minutes] = entry.sleepTime.split(':').map(Number);
+                        sleepTotalMinutes += hours * 60 + minutes;
+                    }
+                    
+                    if (entry.wakeTime) {
+                        const [hours, minutes] = entry.wakeTime.split(':').map(Number);
+                        wakeTotalMinutes += hours * 60 + minutes;
+                    }
+                });
+                
+                // 平均入睡時間
+                const avgSleepMinutes = Math.round(sleepTotalMinutes / monthEntries.length);
+                const avgSleepHours = Math.floor(avgSleepMinutes / 60);
+                const avgSleepMins = avgSleepMinutes % 60;
+                document.getElementById('avg-sleep-time').textContent = 
+                    `${String(avgSleepHours).padStart(2, '0')}:${String(avgSleepMins).padStart(2, '0')}`;
+                
+                // 平均起床時間
+                const avgWakeMinutes = Math.round(wakeTotalMinutes / monthEntries.length);
+                const avgWakeHours = Math.floor(avgWakeMinutes / 60);
+                const avgWakeMins = avgWakeMinutes % 60;
+                document.getElementById('avg-wake-time').textContent = 
+                    `${String(avgWakeHours).padStart(2, '0')}:${String(avgWakeMins).padStart(2, '0')}`;
+                
+                // 計算平均睡眠時數
+                let totalSleepHours = 0;
+                let validEntries = 0;
+                
+                monthEntries.forEach(([_, entry]) => {
+                    if (entry.sleepTime && entry.wakeTime) {
+                        const sleepTime = new Date(`2000-01-01T${entry.sleepTime}:00`);
+                        const wakeTime = new Date(`2000-01-01T${entry.wakeTime}:00`);
+                        
+                        // 處理跨夜情況
+                        if (wakeTime < sleepTime) {
+                            wakeTime.setDate(wakeTime.getDate() + 1);
+                        }
+                        
+                        const diffMs = wakeTime - sleepTime;
+                        totalSleepHours += diffMs / (1000 * 60 * 60);
+                        validEntries++;
+                    }
+                });
+                
+                if (validEntries > 0) {
+                    const avgSleepHours = (totalSleepHours / validEntries).toFixed(1);
+                    document.getElementById('avg-sleep-hours').textContent = `${avgSleepHours} 小時`;
+                }
+                
+                // 計算平均睡眠品質
+                let totalQuality = 0;
+                let qualityEntries = 0;
+                const qualityDistribution = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+                
+                monthEntries.forEach(([_, entry]) => {
+                    if (entry.quality) {
+                        totalQuality += entry.quality;
+                        qualityEntries++;
+                        qualityDistribution[entry.quality]++;
+                    }
+                });
+                
+                if (qualityEntries > 0) {
+                    const avgQuality = (totalQuality / qualityEntries).toFixed(1);
+                    document.getElementById('avg-quality').textContent = `${avgQuality}/5.0`;
+                    
+                    // 渲染品質分佈圖表
+                    renderQualityChart(qualityDistribution);
+                }
+            }
+            
+            // 渲染睡眠品質圖表
+            function renderQualityChart(distribution) {
+                const chartContainer = document.getElementById('quality-chart');
+                chartContainer.innerHTML = '';
+                
+                // 如果沒有數據，顯示提示
+                if (Object.values(distribution).every(count => count === 0)) {
+                    chartContainer.innerHTML = '<p>本月無睡眠品質數據</p>';
+                    return;
+                }
+                
+                // 計算最大值用於縮放
+                const maxCount = Math.max(...Object.values(distribution));
+                
+                for (let rating = 1; rating <= 5; rating++) {
+                    const count = distribution[rating] || 0;
+                    const height = maxCount > 0 ? (count / maxCount) * 100 : 0;
+                    
+                    const bar = document.createElement('div');
+                    bar.className = 'quality-bar';
+                    bar.style.height = `${height}%`;
+                    
+                    const value = document.createElement('div');
+                    value.className = 'quality-bar-value';
+                    value.textContent = count;
+                    
+                    const label = document.createElement('div');
+                    label.className = 'quality-bar-label';
+                    label.textContent = `${rating}星`;
+                    
+                    bar.appendChild(value);
+                    bar.appendChild(label);
+                    chartContainer.appendChild(bar);
+                }
+            }
+        });
     </script>
 </body>
 </html>
