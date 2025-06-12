@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>駱彥廷ㄉ睡眠觀察</title>
+    <title>駱彥廷睡眠觀察系統</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -13,18 +13,33 @@
         
         body {
             font-family: 'Microsoft JhengHei', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
-            color: #333;
             min-height: 100vh;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            min-height: 90vh;
         }
         
         header {
+            background: linear-gradient(to right, #2c3e50, #4a6491);
+            padding: 25px;
             text-align: center;
-            padding: 20px 0 30px;
             position: relative;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
         
         .title-container {
@@ -33,54 +48,165 @@
             align-items: center;
             gap: 15px;
             flex-wrap: wrap;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         
         h1 {
-            color: #2c3e50;
+            color: white;
             font-size: 2.5rem;
             margin: 0;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             position: relative;
             display: inline-block;
-            background: linear-gradient(to right, #3498db, #9b59b6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             padding: 0 15px;
-            border-radius: 10px;
         }
         
         .subtitle {
-            color: #7f8c8d;
+            color: #ecf0f1;
             font-size: 1.2rem;
             margin: 0;
             padding: 8px 15px;
-            background-color: rgba(255,255,255,0.7);
+            background-color: rgba(0,0,0,0.2);
             border-radius: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            position: relative;
-            width: 100%;
-        }
-        
-        .subtitle::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: -5px;
-            height: 2px;
-            background: linear-gradient(to right, transparent, #3498db, transparent);
+            display: inline-block;
         }
         
         .title-decoration {
             font-size: 1.8rem;
-            color: #3498db;
+            color: #ffd700;
             animation: float 3s ease-in-out infinite;
         }
         
         @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        /* 頁面內容樣式 */
+        .page-content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 30px;
+            color: #333;
+        }
+        
+        /* 登入頁面樣式 */
+        #login-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            flex: 1;
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .login-title {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .login-title i {
+            color: #3498db;
+        }
+        
+        .account-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .form-group {
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .login-btn {
+            padding: 14px;
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+        }
+        
+        .login-btn:hover {
+            background: linear-gradient(to right, #2980b9, #2573a7);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .system-info {
+            margin-top: 40px;
+            background: #e3f2fd;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: left;
+        }
+        
+        .system-info h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .system-info ul {
+            padding-left: 25px;
+        }
+        
+        .system-info li {
+            margin: 12px 0;
+            color: #2c3e50;
+        }
+        
+        /* 主頁面樣式 */
+        #main-page {
+            display: none;
+            flex-direction: column;
+            flex: 1;
         }
         
         .dashboard {
@@ -102,6 +228,7 @@
             padding: 25px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.08);
             transition: transform 0.3s ease;
+            border: 1px solid #eee;
         }
         
         .panel:hover {
@@ -124,6 +251,9 @@
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .calendar-header button:hover {
@@ -434,91 +564,57 @@
         
         footer {
             text-align: center;
-            margin-top: 40px;
+            margin-top: auto;
             color: #7f8c8d;
             font-size: 0.9rem;
             padding: 20px 0;
             border-top: 1px solid #eee;
         }
         
-        /* 帳號系統樣式 */
-        .account-section {
-            margin-top: 15px;
-            text-align: center;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        .account-form {
+        .user-controls {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-width: 300px;
-            margin: 0 auto;
-        }
-        
-        .account-form input {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-        
-        .account-form button {
-            padding: 10px;
-            background: linear-gradient(to right, #3498db, #2980b9);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        
-        .account-info {
-            display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
+            padding: 15px 30px;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
         }
         
         .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .username {
             font-weight: bold;
             color: #3498db;
         }
         
         .logout-btn {
-            padding: 6px 12px;
+            padding: 8px 16px;
             background: #e74c3c;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .logout-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
         }
         
         .sync-info {
-            margin-top: 10px;
-            font-size: 0.85rem;
-            color: #7f8c8d;
-        }
-        
-        .sync-status {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 5px;
-            margin-top: 5px;
-        }
-        
-        .sync-status .success {
-            color: #2ecc71;
-        }
-        
-        .sync-status .error {
-            color: #e74c3c;
+            gap: 8px;
+            color: #7f8c8d;
         }
         
         /* 響應式調整 */
@@ -544,149 +640,187 @@
                 font-size: 1.5rem;
             }
             
-            .account-form {
-                max-width: 100%;
+            .login-container {
+                padding: 25px;
+            }
+            
+            .user-controls {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="title-container">
-            <span class="title-decoration">🌙</span>
-            <h1>駱彥廷ㄉ睡眠觀察</h1>
-            <span class="title-decoration">✨</span>
-        </div>
-        <div class="subtitle">記錄睡眠時間與品質，提升健康生活</div>
+    <div class="container">
+        <header>
+            <div class="title-container">
+                <span class="title-decoration">🌙</span>
+                <h1>駱彥廷ㄉ睡眠觀察</h1>
+                <span class="title-decoration">✨</span>
+            </div>
+            <div class="subtitle">記錄睡眠時間與品質，提升健康生活</div>
+        </header>
         
-        <div class="account-section">
-            <div id="login-section">
-                <div class="account-form">
-                    <input type="text" id="username" placeholder="使用者名稱" required>
-                    <input type="password" id="password" placeholder="密碼" required>
-                    <button id="login-btn"><i class="fas fa-sign-in-alt"></i> 登入</button>
+        <div class="page-content">
+            <!-- 登入頁面 -->
+            <div id="login-page">
+                <div class="login-container">
+                    <h2 class="login-title"><i class="fas fa-user-lock"></i> 帳號登入</h2>
+                    
+                    <form class="account-form" id="login-form">
+                        <div class="form-group">
+                            <label for="username"><i class="fas fa-user"></i> 使用者名稱</label>
+                            <input type="text" id="username" placeholder="輸入您的使用者名稱" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password"><i class="fas fa-key"></i> 密碼</label>
+                            <input type="password" id="password" placeholder="輸入您的密碼" required>
+                        </div>
+                        
+                        <button type="submit" class="login-btn">
+                            <i class="fas fa-sign-in-alt"></i> 登入系統
+                        </button>
+                    </form>
+                    
+                    <div class="system-info">
+                        <h3><i class="fas fa-info-circle"></i> 系統資訊</h3>
+                        <ul>
+                            <li>使用本系統記錄每日睡眠時間與品質</li>
+                            <li>透過日曆視圖查看每月睡眠情況</li>
+                            <li>系統會自動計算睡眠統計數據</li>
+                            <li>數據自動儲存至雲端，隨時隨地存取</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <div id="logged-in-section" style="display: none;">
-                <div class="account-info">
-                    <span class="user-info">歡迎 <span id="display-username"></span>！</span>
-                    <button class="logout-btn" id="logout-btn"><i class="fas fa-sign-out-alt"></i> 登出</button>
+            
+            <!-- 睡眠記錄主頁面 -->
+            <div id="main-page">
+                <div class="dashboard">
+                    <div class="panel">
+                        <div class="calendar-header">
+                            <button id="prev-month"><i class="fas fa-chevron-left"></i> 上個月</button>
+                            <h2 id="current-month"></h2>
+                            <button id="next-month">下個月 <i class="fas fa-chevron-right"></i></button>
+                        </div>
+                        <div class="calendar-grid" id="calendar-grid">
+                            <!-- 日曆內容將由JavaScript動態生成 -->
+                        </div>
+                    </div>
+                    
+                    <div class="panel">
+                        <h2><i class="fas fa-chart-line"></i> 睡眠統計</h2>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <h3><i class="fas fa-moon"></i> 平均入睡時間</h3>
+                                <div class="stat-value" id="avg-sleep-time">--:--</div>
+                            </div>
+                            <div class="stat-item">
+                                <h3><i class="fas fa-sun"></i> 平均起床時間</h3>
+                                <div class="stat-value" id="avg-wake-time">--:--</div>
+                            </div>
+                            <div class="stat-item">
+                                <h3><i class="fas fa-bed"></i> 平均睡眠時數</h3>
+                                <div class="stat-value" id="avg-sleep-hours">-- 小時</div>
+                            </div>
+                            <div class="stat-item">
+                                <h3><i class="fas fa-calendar-check"></i> 本月打卡天數</h3>
+                                <div class="stat-value" id="total-days">0 天</div>
+                            </div>
+                            <div class="stat-item">
+                                <h3><i class="fas fa-star"></i> 平均睡眠品質</h3>
+                                <div class="stat-value" id="avg-quality">--</div>
+                            </div>
+                        </div>
+                        
+                        <div class="sleep-quality-chart" id="quality-chart">
+                            <!-- 睡眠品質圖表將由JavaScript動態生成 -->
+                        </div>
+                        
+                        <div class="tips">
+                            <h3><i class="fas fa-lightbulb"></i> 優質睡眠小貼士</h3>
+                            <ul>
+                                <li>每天固定時間上床睡覺和起床</li>
+                                <li>睡前1小時避免使用電子設備</li>
+                                <li>保持臥室涼爽、黑暗且安靜</li>
+                                <li>下午後避免攝取咖啡因</li>
+                                <li>白天適度運動有助於夜間睡眠</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                <div class="sync-info">
-                    <div class="sync-status">
+                
+                <div class="user-controls">
+                    <div class="user-info">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="username" id="display-username"></span>
+                        <button class="logout-btn" id="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i> 登出系統
+                        </button>
+                    </div>
+                    <div class="sync-info">
                         <i class="fas fa-sync"></i>
                         <span id="sync-message">資料已同步</span>
                     </div>
                 </div>
             </div>
         </div>
-    </header>
-    
-    <div class="dashboard">
-        <div class="panel">
-            <div class="calendar-header">
-                <button id="prev-month"><i class="fas fa-chevron-left"></i> 上個月</button>
-                <h2 id="current-month"></h2>
-                <button id="next-month">下個月 <i class="fas fa-chevron-right"></i></button>
-            </div>
-            <div class="calendar-grid" id="calendar-grid">
-                <!-- 日曆內容將由JavaScript動態生成 -->
+        
+        <div class="modal" id="entry-modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h3 id="modal-date"></h3>
+                
+                <div>
+                    <label for="sleep-time"><i class="fas fa-moon"></i> 入睡時間:</label>
+                    <input type="time" id="sleep-time" required value="23:00">
+                </div>
+                
+                <div>
+                    <label for="wake-time"><i class="fas fa-sun"></i> 起床時間:</label>
+                    <input type="time" id="wake-time" required value="07:30">
+                </div>
+                
+                <div class="quality-section">
+                    <label><i class="fas fa-star"></i> 睡眠品質:</label>
+                    <div class="star-rating" id="star-rating">
+                        <i class="fas fa-star" data-rating="1"></i>
+                        <i class="fas fa-star" data-rating="2"></i>
+                        <i class="fas fa-star" data-rating="3"></i>
+                        <i class="fas fa-star" data-rating="4"></i>
+                        <i class="fas fa-star" data-rating="5"></i>
+                    </div>
+                    <div id="quality-description" style="text-align: center; margin-top: 10px; font-style: italic; color: #7f8c8d;">
+                        請選擇睡眠品質評分
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button id="save-entry"><i class="fas fa-save"></i> 保存記錄</button>
+                    <button id="cancel-entry"><i class="fas fa-times"></i> 取消</button>
+                </div>
             </div>
         </div>
         
-        <div class="panel">
-            <h2><i class="fas fa-chart-line"></i> 睡眠統計</h2>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <h3><i class="fas fa-moon"></i> 平均入睡時間</h3>
-                    <div class="stat-value" id="avg-sleep-time">--:--</div>
-                </div>
-                <div class="stat-item">
-                    <h3><i class="fas fa-sun"></i> 平均起床時間</h3>
-                    <div class="stat-value" id="avg-wake-time">--:--</div>
-                </div>
-                <div class="stat-item">
-                    <h3><i class="fas fa-bed"></i> 平均睡眠時數</h3>
-                    <div class="stat-value" id="avg-sleep-hours">-- 小時</div>
-                </div>
-                <div class="stat-item">
-                    <h3><i class="fas fa-calendar-check"></i> 本月打卡天數</h3>
-                    <div class="stat-value" id="total-days">0 天</div>
-                </div>
-                <div class="stat-item">
-                    <h3><i class="fas fa-star"></i> 平均睡眠品質</h3>
-                    <div class="stat-value" id="avg-quality">--</div>
-                </div>
-            </div>
-            
-            <div class="sleep-quality-chart" id="quality-chart">
-                <!-- 睡眠品質圖表將由JavaScript動態生成 -->
-            </div>
-            
-            <div class="tips">
-                <h3><i class="fas fa-lightbulb"></i> 優質睡眠小貼士</h3>
-                <ul>
-                    <li>每天固定時間上床睡覺和起床</li>
-                    <li>睡前1小時避免使用電子設備</li>
-                    <li>保持臥室涼爽、黑暗且安靜</li>
-                    <li>下午後避免攝取咖啡因</li>
-                    <li>白天適度運動有助於夜間睡眠</li>
-                </ul>
-            </div>
-        </div>
+        <footer>
+            <p>睡眠是健康的基石 · 優質睡眠帶來美好生活</p>
+            <p>© 2025 emily ai駱彥廷睡眠觀察系統 · 版本 3.2</p>
+            <p>資料已儲存至雲端，可在任何裝置存取</p>
+        </footer>
     </div>
-    
-    <div class="modal" id="entry-modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h3 id="modal-date"></h3>
-            
-            <div>
-                <label for="sleep-time"><i class="fas fa-moon"></i> 入睡時間:</label>
-                <input type="time" id="sleep-time" required value="23:00">
-            </div>
-            
-            <div>
-                <label for="wake-time"><i class="fas fa-sun"></i> 起床時間:</label>
-                <input type="time" id="wake-time" required value="07:30">
-            </div>
-            
-            <div class="quality-section">
-                <label><i class="fas fa-star"></i> 睡眠品質:</label>
-                <div class="star-rating" id="star-rating">
-                    <i class="fas fa-star" data-rating="1"></i>
-                    <i class="fas fa-star" data-rating="2"></i>
-                    <i class="fas fa-star" data-rating="3"></i>
-                    <i class="fas fa-star" data-rating="4"></i>
-                    <i class="fas fa-star" data-rating="5"></i>
-                </div>
-                <div id="quality-description" style="text-align: center; margin-top: 10px; font-style: italic; color: #7f8c8d;">
-                    請選擇睡眠品質評分
-                </div>
-            </div>
-            
-            <div class="button-group">
-                <button id="save-entry"><i class="fas fa-save"></i> 保存記錄</button>
-                <button id="cancel-entry"><i class="fas fa-times"></i> 取消</button>
-            </div>
-        </div>
-    </div>
-    
-    <footer>
-        <p>睡眠是健康的基石 · 優質睡眠帶來美好生活</p>
-        <p>© 2025 emily ai駱彥廷睡眠觀察系統 · 版本 2.0</p>
-        <p>資料已儲存至雲端，可在任何裝置存取</p>
-    </footer>
     
     <script>
         // 模擬的雲端數據庫API
-const cloudDB = {
-    users: {
-        "camel_sleep": "sleepearly!!"  // 預設帳號
-    },
-    sleepData: {
-        "camel_sleep": {}  // 預設用戶的睡眠數據
-    },
+        const cloudDB = {
+            users: {
+                "camel_sleep": "sleepearly!!"  // 預設帳號
+            },
+            sleepData: {
+                "camel_sleep": {}  // 預設用戶的睡眠數據
+            },
             
             // 用戶登入
             login: function(username, password) {
@@ -725,12 +859,46 @@ const cloudDB = {
                 5: "極佳 - 深度睡眠，醒來神清氣爽"
             };
             
+            // 檢查是否有已登入用戶
+            checkLoginStatus();
+            
             // 初始化UI
-            updateUI();
             setupStarRating();
             
             // 註冊事件監聽器
             setupEventListeners();
+            
+            // 檢查登入狀態
+            function checkLoginStatus() {
+                // 檢查是否有用戶登入（實際應用中會從session或localStorage獲取）
+                currentUser = localStorage.getItem('sleepUser');
+                if (currentUser) {
+                    // 獲取用戶數據
+                    sleepData = cloudDB.sleepData[currentUser] || {};
+                    showMainPage();
+                } else {
+                    showLoginPage();
+                }
+            }
+            
+            // 顯示登入頁面
+            function showLoginPage() {
+                document.getElementById('login-page').style.display = 'flex';
+                document.getElementById('main-page').style.display = 'none';
+            }
+            
+            // 顯示主頁面
+            function showMainPage() {
+                document.getElementById('login-page').style.display = 'none';
+                document.getElementById('main-page').style.display = 'flex';
+                
+                // 更新用戶名顯示
+                document.getElementById('display-username').textContent = currentUser;
+                
+                // 渲染日曆和統計
+                renderCalendar(currentMonth, currentYear);
+                updateStats();
+            }
             
             // 設置星級評分
             function setupStarRating() {
@@ -759,8 +927,11 @@ const cloudDB = {
             
             // 設置事件監聽器
             function setupEventListeners() {
-                // 登入按鈕
-                document.getElementById('login-btn').addEventListener('click', login);
+                // 登入表單
+                document.getElementById('login-form').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    login();
+                });
                 
                 // 登出按鈕
                 document.getElementById('logout-btn').addEventListener('click', logout);
@@ -818,10 +989,9 @@ const cloudDB = {
                 if (result.success) {
                     currentUser = username;
                     sleepData = result.userData;
+                    localStorage.setItem('sleepUser', username);
                     showSyncMessage('登入成功！資料已同步', 'success');
-                    updateUI();
-                    renderCalendar(currentMonth, currentYear);
-                    updateStats();
+                    showMainPage();
                 } else {
                     showSyncMessage(result.message, 'error');
                 }
@@ -831,23 +1001,9 @@ const cloudDB = {
             function logout() {
                 currentUser = null;
                 sleepData = {};
-                document.getElementById('username').value = '';
-                document.getElementById('password').value = '';
-                updateUI();
-                renderCalendar(currentMonth, currentYear);
-                updateStats();
+                localStorage.removeItem('sleepUser');
+                showLoginPage();
                 showSyncMessage('已登出', 'info');
-            }
-            
-            // 更新UI狀態
-            function updateUI() {
-                const loggedIn = currentUser !== null;
-                document.getElementById('login-section').style.display = loggedIn ? 'none' : 'block';
-                document.getElementById('logged-in-section').style.display = loggedIn ? 'block' : 'none';
-                
-                if (loggedIn) {
-                    document.getElementById('display-username').textContent = currentUser;
-                }
             }
             
             // 顯示同步訊息
@@ -859,7 +1015,7 @@ const cloudDB = {
                 // 3秒後清除訊息
                 setTimeout(() => {
                     if (syncMessage.textContent === message) {
-                        syncMessage.textContent = '';
+                        syncMessage.textContent = '資料已同步';
                         syncMessage.className = '';
                     }
                 }, 3000);
