@@ -28,27 +28,60 @@
             position: relative;
         }
         
+        .title-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        
         h1 {
             color: #2c3e50;
-            font-size: 2.8rem;
-            margin-bottom: 10px;
+            font-size: 2.5rem;
+            margin: 0;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
             position: relative;
             display: inline-block;
-        }
-        
-        h1::after {
-            content: "💤";
-            position: absolute;
-            right: -40px;
-            top: 5px;
-            font-size: 2rem;
+            background: linear-gradient(to right, #3498db, #9b59b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            padding: 0 15px;
+            border-radius: 10px;
         }
         
         .subtitle {
             color: #7f8c8d;
             font-size: 1.2rem;
-            margin-top: 10px;
+            margin: 0;
+            padding: 8px 15px;
+            background-color: rgba(255,255,255,0.7);
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+            width: 100%;
+        }
+        
+        .subtitle::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -5px;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #3498db, transparent);
+        }
+        
+        .title-decoration {
+            font-size: 1.8rem;
+            color: #3498db;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
         
         .dashboard {
@@ -81,6 +114,23 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+        }
+        
+        .calendar-header button {
+            padding: 8px 15px;
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .calendar-header button:hover {
+            background: linear-gradient(to right, #2980b9, #2573a7);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         
         .calendar-grid {
@@ -391,11 +441,39 @@
             padding: 20px 0;
             border-top: 1px solid #eee;
         }
+        
+        /* 響應式調整 */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .panel {
+                padding: 15px;
+            }
+            
+            .day {
+                height: 60px;
+                font-size: 1rem;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>駱彥廷ㄉ睡眠觀察</h1>
+        <div class="title-container">
+            <span class="title-decoration">🌙</span>
+            <h1>駱彥廷ㄉ睡眠觀察</h1>
+            <span class="title-decoration">✨</span>
+        </div>
         <div class="subtitle">記錄睡眠時間與品質，提升健康生活</div>
     </header>
     
@@ -447,6 +525,7 @@
                     <li>睡前1小時避免使用電子設備</li>
                     <li>保持臥室涼爽、黑暗且安靜</li>
                     <li>下午後避免攝取咖啡因</li>
+                    <li>白天適度運動有助於夜間睡眠</li>
                 </ul>
             </div>
         </div>
@@ -837,6 +916,15 @@
                     const bar = document.createElement('div');
                     bar.className = 'quality-bar';
                     bar.style.height = `${height}%`;
+                    
+                    // 根據評分設置不同顏色
+                    if (rating <= 2) {
+                        bar.style.background = '#ff6b6b'; // 紅色表示差
+                    } else if (rating === 3) {
+                        bar.style.background = '#feca57'; // 黃色表示中等
+                    } else {
+                        bar.style.background = '#1dd1a1'; // 綠色表示好
+                    }
                     
                     const value = document.createElement('div');
                     value.className = 'quality-bar-value';
