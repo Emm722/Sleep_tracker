@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -441,6 +442,86 @@
             border-top: 1px solid #eee;
         }
         
+        /* 帳號系統樣式 */
+        .account-section {
+            margin-top: 15px;
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .account-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        
+        .account-form input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .account-form button {
+            padding: 10px;
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .account-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .user-info {
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .logout-btn {
+            padding: 6px 12px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .sync-info {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+        
+        .sync-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        
+        .sync-status .success {
+            color: #2ecc71;
+        }
+        
+        .sync-status .error {
+            color: #e74c3c;
+        }
+        
         /* 響應式調整 */
         @media (max-width: 600px) {
             h1 {
@@ -463,6 +544,10 @@
             .stat-value {
                 font-size: 1.5rem;
             }
+            
+            .account-form {
+                max-width: 100%;
+            }
         }
     </style>
 </head>
@@ -474,6 +559,28 @@
             <span class="title-decoration">✨</span>
         </div>
         <div class="subtitle">記錄睡眠時間與品質，提升健康生活</div>
+        
+        <div class="account-section">
+            <div id="login-section">
+                <div class="account-form">
+                    <input type="text" id="username" placeholder="使用者名稱" required>
+                    <input type="password" id="password" placeholder="密碼" required>
+                    <button id="login-btn"><i class="fas fa-sign-in-alt"></i> 登入</button>
+                </div>
+            </div>
+            <div id="logged-in-section" style="display: none;">
+                <div class="account-info">
+                    <span class="user-info">歡迎 <span id="display-username"></span>！</span>
+                    <button class="logout-btn" id="logout-btn"><i class="fas fa-sign-out-alt"></i> 登出</button>
+                </div>
+                <div class="sync-info">
+                    <div class="sync-status">
+                        <i class="fas fa-sync"></i>
+                        <span id="sync-message">資料已同步</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </header>
     
     <div class="dashboard">
@@ -568,10 +675,38 @@
     
     <footer>
         <p>睡眠是健康的基石 · 優質睡眠帶來美好生活</p>
-        <p>© 2025 駱彥廷睡眠觀察系統 · 版本 2.0</p>
+        <p>© 2025 emily ai駱彥廷睡眠觀察系統 · 版本 2.0</p>
+        <p>資料已儲存至雲端，可在任何裝置存取</p>
     </footer>
     
     <script>
+        // 模擬的雲端數據庫API
+const cloudDB = {
+    users: {
+        "camel_sleep": "sleepearly!!"  // 預設帳號
+    },
+    sleepData: {
+        "camel_sleep": {}  // 預設用戶的睡眠數據
+    },
+            
+            // 用戶登入
+            login: function(username, password) {
+                if (this.users[username] === password) {
+                    return { success: true, userData: this.sleepData[username] };
+                }
+                return { success: false, message: '使用者名稱或密碼錯誤' };
+            },
+            
+            // 儲存睡眠數據
+            saveData: function(username, data) {
+                if (!this.users[username]) {
+                    return { success: false, message: '使用者不存在' };
+                }
+                this.sleepData[username] = data;
+                return { success: true, message: '數據已儲存至雲端' };
+            }
+        };
+        
         document.addEventListener('DOMContentLoaded', function() {
             // 當前日期
             const now = new Date();
@@ -579,9 +714,8 @@
             let currentYear = now.getFullYear();
             const today = now.getDate();
             let selectedRating = 0;
-            
-            // 從本地存儲加載數據
-            let sleepData = JSON.parse(localStorage.getItem('sleepData')) || {};
+            let currentUser = null;
+            let sleepData = {};
             
             // 睡眠品質描述
             const qualityDescriptions = {
@@ -592,29 +726,12 @@
                 5: "極佳 - 深度睡眠，醒來神清氣爽"
             };
             
-            // 初始化日曆
-            renderCalendar(currentMonth, currentYear);
-            updateStats();
+            // 初始化UI
+            updateUI();
             setupStarRating();
             
-            // 上個月/下個月按鈕
-            document.getElementById('prev-month').addEventListener('click', function() {
-                currentMonth--;
-                if (currentMonth < 0) {
-                    currentMonth = 11;
-                    currentYear--;
-                }
-                renderCalendar(currentMonth, currentYear);
-            });
-            
-            document.getElementById('next-month').addEventListener('click', function() {
-                currentMonth++;
-                if (currentMonth > 11) {
-                    currentMonth = 0;
-                    currentYear++;
-                }
-                renderCalendar(currentMonth, currentYear);
-            });
+            // 註冊事件監聽器
+            setupEventListeners();
             
             // 設置星級評分
             function setupStarRating() {
@@ -639,6 +756,114 @@
                         description.textContent = qualityDescriptions[rating];
                     });
                 });
+            }
+            
+            // 設置事件監聽器
+            function setupEventListeners() {
+                // 登入按鈕
+                document.getElementById('login-btn').addEventListener('click', login);
+                
+                // 登出按鈕
+                document.getElementById('logout-btn').addEventListener('click', logout);
+                
+                // 上個月/下個月按鈕
+                document.getElementById('prev-month').addEventListener('click', function() {
+                    currentMonth--;
+                    if (currentMonth < 0) {
+                        currentMonth = 11;
+                        currentYear--;
+                    }
+                    renderCalendar(currentMonth, currentYear);
+                });
+                
+                document.getElementById('next-month').addEventListener('click', function() {
+                    currentMonth++;
+                    if (currentMonth > 11) {
+                        currentMonth = 0;
+                        currentYear++;
+                    }
+                    renderCalendar(currentMonth, currentYear);
+                });
+                
+                // 保存打卡記錄
+                document.getElementById('save-entry').addEventListener('click', saveEntry);
+                
+                // 取消打卡
+                document.getElementById('cancel-entry').addEventListener('click', function() {
+                    document.getElementById('entry-modal').style.display = 'none';
+                });
+                
+                // 點擊模態框外部或關閉按鈕關閉
+                document.querySelector('.close-modal').addEventListener('click', function() {
+                    document.getElementById('entry-modal').style.display = 'none';
+                });
+                
+                document.getElementById('entry-modal').addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.style.display = 'none';
+                    }
+                });
+            }
+            
+            // 登入功能
+            function login() {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                if (!username || !password) {
+                    showSyncMessage('請輸入使用者名稱和密碼', 'error');
+                    return;
+                }
+                
+                const result = cloudDB.login(username, password);
+                if (result.success) {
+                    currentUser = username;
+                    sleepData = result.userData;
+                    showSyncMessage('登入成功！資料已同步', 'success');
+                    updateUI();
+                    renderCalendar(currentMonth, currentYear);
+                    updateStats();
+                } else {
+                    showSyncMessage(result.message, 'error');
+                }
+            }
+            
+            // 登出功能
+            function logout() {
+                currentUser = null;
+                sleepData = {};
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                updateUI();
+                renderCalendar(currentMonth, currentYear);
+                updateStats();
+                showSyncMessage('已登出', 'info');
+            }
+            
+            // 更新UI狀態
+            function updateUI() {
+                const loggedIn = currentUser !== null;
+                document.getElementById('login-section').style.display = loggedIn ? 'none' : 'block';
+                document.getElementById('logged-in-section').style.display = loggedIn ? 'block' : 'none';
+                
+                if (loggedIn) {
+                    document.getElementById('display-username').textContent = currentUser;
+                }
+            }
+            
+            // 顯示同步訊息
+            function showSyncMessage(message, type) {
+                const syncMessage = document.getElementById('sync-message');
+                syncMessage.textContent = message;
+                syncMessage.className = type;
+                
+                // 3秒後清除訊息
+                setTimeout(() => {
+                    if (syncMessage.textContent === message) {
+                        syncMessage.textContent = '';
+                        syncMessage.className = '';
+                    }
+                }, 3000);
             }
             
             // 渲染日曆
@@ -716,6 +941,11 @@
             
             // 打開打卡模態框
             function openEntryModal(dateStr) {
+                if (!currentUser) {
+                    showSyncMessage('請先登入以記錄睡眠', 'error');
+                    return;
+                }
+                
                 const [year, month, day] = dateStr.split('-');
                 const modal = document.getElementById('entry-modal');
                 document.getElementById('modal-date').textContent = `${year}年${month}月${day}日`;
@@ -747,7 +977,7 @@
             }
             
             // 保存打卡記錄
-            document.getElementById('save-entry').addEventListener('click', function() {
+            function saveEntry() {
                 const sleepTime = document.getElementById('sleep-time').value;
                 const wakeTime = document.getElementById('wake-time').value;
                 const dateStr = document.getElementById('modal-date').dataset.date;
@@ -774,29 +1004,19 @@
                     quality: selectedRating
                 };
                 
-                localStorage.setItem('sleepData', JSON.stringify(sleepData));
+                // 保存到雲端
+                const result = cloudDB.saveData(currentUser, sleepData);
+                if (result.success) {
+                    showSyncMessage(result.message, 'success');
+                } else {
+                    showSyncMessage(result.message, 'error');
+                }
                 
                 // 關閉模態框並更新
                 document.getElementById('entry-modal').style.display = 'none';
                 renderCalendar(currentMonth, currentYear);
                 updateStats();
-            });
-            
-            // 取消打卡
-            document.getElementById('cancel-entry').addEventListener('click', function() {
-                document.getElementById('entry-modal').style.display = 'none';
-            });
-            
-            // 點擊模態框外部或關閉按鈕關閉
-            document.querySelector('.close-modal').addEventListener('click', function() {
-                document.getElementById('entry-modal').style.display = 'none';
-            });
-            
-            document.getElementById('entry-modal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.style.display = 'none';
-                }
-            });
+            }
             
             // 更新統計數據
             function updateStats() {
